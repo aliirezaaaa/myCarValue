@@ -51,4 +51,21 @@ describe('AuthService', () => {
       'email already in use',
     );
   });
+
+  it('throws an error if signin is called wiht an unused email', async () => {
+    await expect(service.signin('test@test.com', 'test')).rejects.toThrow(
+      'user not found!',
+    );
+  });
+
+  it('throws an error if an invalid password is provided', async () => {
+    fakeUsersService.find = () =>
+      Promise.resolve([
+        { id: 1, email: 'test@test.com', password: 'test' } as User,
+      ]);
+
+    await expect(service.signin('test@test.com', 'password')).rejects.toThrow(
+      'Wrong Credentials',
+    );
+  });
 });
