@@ -11,10 +11,23 @@ describe('AuthService', () => {
     // Create a fake copy of the users service
     // We use Partial<UsersService> to ensure that the methods have correct type signiture
     // We just define userService methods that used in authService, not all userService methods
+    const users: User[] = [];
     fakeUsersService = {
-      find: () => Promise.resolve([]),
-      create: (email: string, password: string) =>
-        Promise.resolve({ id: 1, email, password } as User),
+      find: (email: string) => {
+        const filteredUsers = users.filter((user) => user.email === email);
+        return Promise.resolve(filteredUsers);
+      },
+      create: (email: string, password: string) => {
+        const user = {
+          id: Math.floor(Math.random() * 9999),
+          email,
+          password,
+        } as User;
+        users.push(user);
+        console.log(user);
+
+        return Promise.resolve(user);
+      },
     };
 
     // Create new DI container for testing
@@ -67,5 +80,13 @@ describe('AuthService', () => {
     await expect(service.signin('test@test.com', 'password')).rejects.toThrow(
       'Wrong Credentials',
     );
+  });
+
+  it('returns a user if password is correct', async () => {
+    await service.signup('test@test.com', 'mypassword');
+
+    const user = await service.signin('test@test.com', 'mypassword');
+
+    expect(user).toBeDefined();
   });
 });
