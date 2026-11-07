@@ -5,12 +5,13 @@ import { User } from './user.entity';
 
 describe('AuthService', () => {
   let service: AuthService;
+  let fakeUsersService: Partial<UsersService>;
 
   beforeEach(async () => {
     // Create a fake copy of the users service
     // We use Partial<UsersService> to ensure that the methods have correct type signiture
     // We just define userService methods that used in authService, not all userService methods
-    const fakeUsersService: Partial<UsersService> = {
+    fakeUsersService = {
       find: () => Promise.resolve([]),
       create: (email: string, password: string) =>
         Promise.resolve({ id: 1, email, password } as User),
@@ -41,5 +42,13 @@ describe('AuthService', () => {
     const [salt, hash] = user.password.split('.');
     expect(salt).toBeDefined();
     expect(hash).toBeDefined();
+  });
+
+  it('throws an error if user signs up with email that is already in use', async () => {
+    fakeUsersService.find = () =>
+      Promise.resolve([{ id: 1, email: 'a', password: '2' } as User]);
+    await expect(service.signup('test@test.com', 'test')).rejects.toThrow(
+      'email already in use',
+    );
   });
 });
