@@ -58,8 +58,7 @@ describe('AuthService', () => {
   });
 
   it('throws an error if user signs up with email that is already in use', async () => {
-    fakeUsersService.find = () =>
-      Promise.resolve([{ id: 1, email: 'a', password: '2' } as User]);
+    await service.signup('test@test.com', 'test');
     await expect(service.signup('test@test.com', 'test')).rejects.toThrow(
       'email already in use',
     );
@@ -72,10 +71,7 @@ describe('AuthService', () => {
   });
 
   it('throws an error if an invalid password is provided', async () => {
-    fakeUsersService.find = () =>
-      Promise.resolve([
-        { id: 1, email: 'test@test.com', password: 'test' } as User,
-      ]);
+    await service.signup('test@test.com', 'password1');
 
     await expect(service.signin('test@test.com', 'password')).rejects.toThrow(
       'Wrong Credentials',
