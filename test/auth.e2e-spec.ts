@@ -3,6 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
+import { setupApp } from '../src/setup-app';
 
 describe('Authentication System', () => {
   let app: INestApplication<App>;
@@ -13,14 +14,15 @@ describe('Authentication System', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    setupApp(app);
     await app.init();
   });
 
   it('handles a signup request', () => {
-    const email = 'testing@test.com';
+    const email = 'testing18@test.com';
     return request(app.getHttpServer())
       .post('/auth/signup')
-      .send({ email, passowrd: 'test123' })
+      .send({ email, password: 'test123' })
       .expect(201)
       .then((res) => {
         const { id, email } = res.body;
