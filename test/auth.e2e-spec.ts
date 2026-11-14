@@ -29,6 +29,24 @@ describe('Authentication System', () => {
       });
   });
 
+  it('signup as a new user then get the currently logged in user(whoAmI request)', async () => {
+    const email = 'test@test.com';
+
+    const res = await request(app.getHttpServer())
+      .post('/auth/signup')
+      .send({ email, password: 'test' })
+      .expect(201);
+
+    const cookie = res.get('Set-Cookie');
+
+    const { body } = await request(app.getHttpServer())
+      .get('/auth/me')
+      .set('Cookie', cookie)
+      .expect(200);
+
+    expect(body.email).toEqual(email);
+  });
+
   afterEach(async () => {
     await app.close();
   });
