@@ -12,6 +12,9 @@ export class Report {
   company: string;
 
   @Column()
+  model: string;
+
+  @Column()
   year: number;
 
   @Column()
