@@ -45,6 +45,7 @@ const cookieSession = require('cookie-session');
   ],
 })
 export class AppModule {
+  constructor(private configService: ConfigService) {}
   // This configure function is going to be called automatically whenever our application
   // starts lisetening for incomming trafic.
   // So inside of it we can setup some middleware that will run on every single incomming requests.
@@ -53,7 +54,7 @@ export class AppModule {
     consumer
       .apply(
         cookieSession({
-          keys: ['abcddcba'], //use for encrypting cookie data
+          keys: [this.configService.get('COOKIE_KEY')], //use for encrypting cookie data
         }),
       )
       // '*' means use this middleware on every single incomming request that flows into entire application
