@@ -30,6 +30,9 @@ export class ReportDto {
   @Expose()
   mileage: number;
 
+  @Expose()
+  approved: boolean;
+
   // Here obj is a reference to the original report entity
   @Transform(({ obj }) => obj.user.id)
   @Expose()
